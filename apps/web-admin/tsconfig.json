@@ -1,0 +1,17 @@
+{
+  "extends": "@repo/typescript-config/react-library.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@ui": ["../../packages/ui/src/index.tsx"],
+      "@ui/*": ["../../packages/ui/src/*"],
+      "@contracts": ["../../packages/api-contracts/src/index.ts"],
+      "@contracts/*": ["../../packages/api-contracts/src/*"],
+      "@utils": ["../../packages/utils/src/index.ts"],
+      "@utils/*": ["../../packages/utils/src/*"]
+    },
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}

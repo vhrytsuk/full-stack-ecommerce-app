@@ -1,0 +1,34 @@
+{
+  "extends": "@repo/typescript-config/react-library.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "noEmit": true,
+    "allowJs": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "paths": {
+      "@/*": ["./app/*", "./src/*"],
+      "@ui": ["../../packages/ui/src/index.tsx"],
+      "@ui/*": ["../../packages/ui/src/*"],
+      "@contracts": ["../../packages/api-contracts/src/index.ts"],
+      "@contracts/*": ["../../packages/api-contracts/src/*"],
+      "@utils": ["../../packages/utils/src/index.ts"],
+      "@utils/*": ["../../packages/utils/src/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

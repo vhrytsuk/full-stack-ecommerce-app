@@ -1,0 +1,36 @@
+{
+  "name": "full-stack-ecommerce",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:backend": "node ./scripts/run-app.mjs backend",
+    "dev:web-client": "node ./scripts/run-app.mjs web-client",
+    "dev:web-admin": "node ./scripts/run-app.mjs web-admin",
+    "lint": "turbo run lint",
+    "lint:backend": "pnpm --filter @repo/backend lint",
+    "lint:web-client": "pnpm --filter @repo/web-client lint",
+    "lint:web-admin": "pnpm --filter @repo/web-admin lint",
+    "test": "turbo run test",
+    "test:backend": "pnpm --filter @repo/backend test",
+    "test:web-client": "pnpm --filter @repo/web-client test",
+    "test:web-admin": "pnpm --filter @repo/web-admin test",
+    "typecheck": "turbo run typecheck",
+    "typecheck:backend": "pnpm --filter @repo/backend typecheck",
+    "typecheck:web-client": "pnpm --filter @repo/web-client typecheck",
+    "typecheck:web-admin": "pnpm --filter @repo/web-admin typecheck",
+    "clean": "turbo run clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.3",
+    "typescript": "^5.9.3",
+    "@types/node": "^24.8.1",
+    "eslint": "^9.38.0",
+    "@eslint/js": "^9.38.0",
+    "@next/eslint-plugin-next": "^15.5.15",
+    "dotenv": "^17.2.3",
+    "typescript-eslint": "^8.46.1"
+  }
+}
