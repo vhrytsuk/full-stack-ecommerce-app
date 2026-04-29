@@ -9,12 +9,13 @@ const EnvSchema = z.object({
     .default("development"),
   BACKEND_HOST: z.string().default("0.0.0.0"),
   BACKEND_PORT: z.coerce.number().int().positive().default(4000),
-  BACKEND_API_BASE_PATH: z.string().default("/api"),
+  BACKEND_API_BASE_PATH: z.string().default("/api/v1"),
   BACKEND_CORS_ORIGIN: z
     .string()
     .default("http://localhost:3000,http://localhost:5173"),
   BACKEND_UPLOADS_DIR: z.string().default("./storage/uploads"),
   BACKEND_PUBLIC_DIR: z.string().default("./public"),
+  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
 });
 
 const parsedEnv = EnvSchema.parse(process.env);

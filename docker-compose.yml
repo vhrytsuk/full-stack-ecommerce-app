@@ -14,12 +14,15 @@ services:
       BACKEND_CORS_ORIGIN: ${BACKEND_CORS_ORIGIN}
       BACKEND_UPLOADS_DIR: ${BACKEND_UPLOADS_DIR}
       BACKEND_PUBLIC_DIR: ${BACKEND_PUBLIC_DIR}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:16-alpine
-    network_mode: bridge
     container_name: postgres-db-development-ecommerce
     env_file:
       - .env
