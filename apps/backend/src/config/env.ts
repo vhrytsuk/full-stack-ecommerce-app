@@ -15,6 +15,13 @@ const EnvSchema = z.object({
     .default("http://localhost:3000,http://localhost:5173"),
   BACKEND_UPLOADS_DIR: z.string().default("./storage/uploads"),
   BACKEND_PUBLIC_DIR: z.string().default("./public"),
+  JWT_ACCESS_SECRET: z
+    .string()
+    .min(32, "JWT_ACCESS_SECRET must be at least 32 characters"),
+  JWT_ACCESS_TTL: z.coerce.number().int().positive().default(15),
+  JWT_REFRESH_TTL: z.coerce.number().int().positive().default(30),
+  JWT_ACCESS_ISSUER: z.string().default("full-stack-ecommerce-backend"),
+  JWT_ACCESS_AUDIENCE: z.string().default("full-stack-ecommerce-api"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
 });
 

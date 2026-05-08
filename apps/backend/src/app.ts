@@ -1,12 +1,14 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { type Express } from "express";
 import helmet from "helmet";
 
 import { healthcheckSchema } from "@repo/api-contracts";
 import { env } from "./config/env.js";
-import { errorHandler } from "./middleware/errorHandler.js";
-import { notFoundHandler } from "./middleware/notFoundHandler.js";
-import { dbRouter } from "./modules/db/db.routes.js";
+import { errorHandler } from "./middleware/errorHandler";
+import { notFoundHandler } from "./middleware/notFoundHandler";
+import { authRouter } from "./modules/auth/auth.routes";
+import { dbRouter } from "./modules/db/db.routes";
 
 const app: Express = express();
 const BASE_PATH = env.BACKEND_API_BASE_PATH;
@@ -17,6 +19,7 @@ app.use(
     origin: env.BACKEND_CORS_ORIGINS,
   })
 );
+app.use(cookieParser());
 app.use(express.json());
 
 app.get(`${BASE_PATH}/health`, (_req, res) => {
@@ -28,6 +31,7 @@ app.get(`${BASE_PATH}/health`, (_req, res) => {
   res.status(200).json(payload);
 });
 
+app.use(`${BASE_PATH}/auth`, authRouter);
 app.use(`${BASE_PATH}/db`, dbRouter);
 
 app.use(notFoundHandler);

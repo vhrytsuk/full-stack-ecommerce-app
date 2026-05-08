@@ -21,7 +21,7 @@ for (const fileName of [".env", ".env.development"]) {
 }
 
 export default defineConfig({
-  schema: "prisma/schema.prisma",
+  schema: "prisma",
   migrations: {
     path: "prisma/migrations",
   },
