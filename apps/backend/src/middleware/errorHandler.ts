@@ -2,6 +2,7 @@ import { ErrorRequestHandler, Response } from "express";
 import { HTTPSTATUS } from "../config/http.config";
 import { AppError } from "../utils/AppError";
 import z from "zod";
+import { logger } from "../config/logger";
 
 const formatZodError = (res: Response, error: z.ZodError) => {
   const errors = error?.issues?.map((err) => ({
@@ -15,8 +16,19 @@ const formatZodError = (res: Response, error: z.ZodError) => {
   });
 };
 
-export const errorHandler: ErrorRequestHandler = (error, req, res, _next) => {
-  void _next;
+export const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
+  if (res.headersSent) {
+    return next(error);
+  }
+
+  logger.error(
+    {
+      error,
+      path: req.originalUrl,
+      method: req.method,
+    },
+    "Request failed"
+  );
 
   console.error("Error occurred on Path:", req.path, error);
 

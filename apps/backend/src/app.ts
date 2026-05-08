@@ -1,13 +1,14 @@
 import cors from "cors";
-import express from "express";
+import express, { type Express } from "express";
 import helmet from "helmet";
 
 import { healthcheckSchema } from "@repo/api-contracts";
 import { env } from "./config/env.js";
-import { errorHandler } from "./middleware/errorHandler";
-import { dbRouter } from "./modules/db/db.routes";
+import { errorHandler } from "./middleware/errorHandler.js";
+import { notFoundHandler } from "./middleware/notFoundHandler.js";
+import { dbRouter } from "./modules/db/db.routes.js";
 
-const app = express();
+const app: Express = express();
 const BASE_PATH = env.BACKEND_API_BASE_PATH;
 
 app.use(helmet());
@@ -29,12 +30,7 @@ app.get(`${BASE_PATH}/health`, (_req, res) => {
 
 app.use(`${BASE_PATH}/db`, dbRouter);
 
+app.use(notFoundHandler);
 app.use(errorHandler);
 
-app.listen(env.BACKEND_PORT, env.BACKEND_HOST, () => {
-  console.log(
-    `Backend listening on http://${env.BACKEND_HOST}:${env.BACKEND_PORT}${env.BACKEND_API_BASE_PATH}`
-  );
-  console.log(`Uploads path: ${env.BACKEND_UPLOADS_PATH}`);
-  console.log(`Public path: ${env.BACKEND_PUBLIC_PATH}`);
-});
+export { app };
