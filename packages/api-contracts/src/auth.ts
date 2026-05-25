@@ -39,8 +39,10 @@ export const registerResponseSchema = z.object({
 });
 
 export const loginResponseSchema = registerResponseSchema;
+export const refreshResponseSchema = registerResponseSchema;
 
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type RegisterResponse = z.infer<typeof registerResponseSchema>;
 export type LoginUserInput = z.infer<typeof loginUserSchema>;
 export type LoginResponse = z.infer<typeof loginResponseSchema>;
+export type RefreshResponse = z.infer<typeof refreshResponseSchema>;

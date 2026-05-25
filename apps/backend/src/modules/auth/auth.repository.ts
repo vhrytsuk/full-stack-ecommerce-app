@@ -25,4 +25,34 @@ export const authRepository = {
       data,
     });
   },
+
+  findSessionByRefreshTokenHash(refreshTokenHash: string) {
+    return prisma.authSession.findUnique({
+      where: { refreshTokenHash },
+      include: {
+        user: true,
+      },
+    });
+  },
+
+  rotateSession(data: {
+    id: string;
+    refreshTokenHash: string;
+    userAgent?: string;
+    ipAddress?: string;
+    expiresAt: Date;
+    lastUsedAt: Date;
+  }) {
+    return prisma.authSession.update({
+      where: { id: data.id },
+      data,
+    });
+  },
+
+  revokeSession(id: string) {
+    return prisma.authSession.update({
+      where: { id },
+      data: { revokedAt: new Date() },
+    });
+  },
 };

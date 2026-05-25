@@ -3,6 +3,7 @@ import type {
   LoginUserInput,
   RegisterResponse,
   RegisterUserInput,
+  RefreshResponse,
 } from "@repo/api-contracts";
 
 import { HTTPSTATUS } from "../../config/http.config";
@@ -34,6 +35,39 @@ const getClientIpAddress = (
   }
 
   return remoteAddress;
+};
+
+const toAuthResponse = async (params: {
+  user: {
+    id: string;
+    email: string;
+    name: string | null;
+    createdAt: Date;
+  };
+  sessionId: string;
+  refreshToken: string;
+  expiresAt: Date;
+}) => {
+  const accessToken = await signAccessToken({
+    sub: params.user.id,
+    sid: params.sessionId,
+    email: params.user.email,
+  });
+
+  return {
+    user: {
+      id: params.user.id,
+      email: params.user.email,
+      name: params.user.name,
+      createdAt: params.user.createdAt.toISOString(),
+    },
+    accessToken,
+    refreshToken: params.refreshToken,
+    session: {
+      id: params.sessionId,
+      expiresAt: params.expiresAt.toISOString(),
+    },
+  };
 };
 
 export const authService = {
@@ -81,26 +115,17 @@ export const authService = {
       expiresAt,
     });
 
-    const accessToken = await signAccessToken({
-      sub: user.id,
-      sid: sessionId,
-      email: user.email,
-    });
-
-    return {
+    return toAuthResponse({
       user: {
         id: user.id,
         email: user.email,
         name: user.name ?? null,
-        createdAt: user.createdAt.toISOString(),
+        createdAt: user.createdAt,
       },
-      accessToken,
+      sessionId,
       refreshToken,
-      session: {
-        id: sessionId,
-        expiresAt: expiresAt.toISOString(),
-      },
-    };
+      expiresAt,
+    });
   },
 
   async login(
@@ -152,25 +177,74 @@ export const authService = {
       expiresAt,
     });
 
-    const accessToken = await signAccessToken({
-      sub: user.id,
-      sid: sessionId,
-      email: user.email,
-    });
-
-    return {
+    return toAuthResponse({
       user: {
         id: user.id,
         email: user.email,
         name: user.name ?? null,
-        createdAt: user.createdAt.toISOString(),
+        createdAt: user.createdAt,
       },
-      accessToken,
+      sessionId,
       refreshToken,
-      session: {
-        id: sessionId,
-        expiresAt: expiresAt.toISOString(),
+      expiresAt,
+    });
+  },
+
+  async refresh(
+    refreshToken: string,
+    metadata: {
+      userAgent?: string;
+      forwardedFor?: string;
+      remoteAddress?: string;
+    }
+  ): Promise<RefreshResponse> {
+    const session = await authRepository.findSessionByRefreshTokenHash(
+      hashRefreshToken(refreshToken)
+    );
+
+    if (!session || session.revokedAt || session.expiresAt <= new Date()) {
+      throw new HttpException(
+        "Refresh token is invalid or expired",
+        HTTPSTATUS.UNAUTHORIZED,
+        ErrorCode.AUTH_INVALID_TOKEN
+      );
+    }
+
+    const nextRefreshToken = generateRefreshToken();
+    const expiresAt = getSessionExpiryDate();
+
+    await authRepository.rotateSession({
+      id: session.id,
+      refreshTokenHash: hashRefreshToken(nextRefreshToken),
+      userAgent: metadata.userAgent,
+      ipAddress: getClientIpAddress(
+        metadata.forwardedFor,
+        metadata.remoteAddress
+      ),
+      expiresAt,
+      lastUsedAt: new Date(),
+    });
+
+    return toAuthResponse({
+      user: {
+        id: session.user.id,
+        email: session.user.email,
+        name: session.user.name ?? null,
+        createdAt: session.user.createdAt,
       },
-    };
+      sessionId: session.id,
+      refreshToken: nextRefreshToken,
+      expiresAt,
+    });
+  },
+
+  logout: async (refreshToken: string) => {
+    const session = await authRepository.findSessionByRefreshTokenHash(
+      hashRefreshToken(refreshToken)
+    );
+
+    if (session) {
+      await authRepository.revokeSession(session.id);
+    }
   },
 };
