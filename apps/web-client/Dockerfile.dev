@@ -1,0 +1,24 @@
+FROM node:20-slim
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable
+
+WORKDIR /app
+
+# Copy manifests only for dependency install layer
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY apps/web-client/package.json ./apps/web-client/package.json
+COPY packages/api-contracts/package.json ./packages/api-contracts/package.json
+COPY packages/utils/package.json ./packages/utils/package.json
+COPY packages/eslint-config/package.json ./packages/eslint-config/package.json
+COPY packages/typescript-config/package.json ./packages/typescript-config/package.json
+
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+
+WORKDIR /app/apps/web-client
+
+EXPOSE 3000
+
+CMD ["pnpm", "dev", "--hostname", "0.0.0.0"]

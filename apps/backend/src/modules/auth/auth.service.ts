@@ -1,9 +1,14 @@
-import type { RegisterResponse, RegisterUserInput } from "@repo/api-contracts";
+import type {
+  LoginResponse,
+  LoginUserInput,
+  RegisterResponse,
+  RegisterUserInput,
+} from "@repo/api-contracts";
 
 import { HTTPSTATUS } from "../../config/http.config";
 import { ErrorCode } from "../../constants/error-code";
 import { HttpException } from "../../utils/catch-errors";
-import { hashPassword } from "../../utils/password";
+import { hashPassword, verifyPassword } from "../../utils/password";
 import {
   generateRefreshToken,
   generateSessionId,
@@ -59,6 +64,77 @@ export const authService = {
       name,
       passwordHash,
     });
+
+    const refreshToken = generateRefreshToken();
+    const sessionId = generateSessionId();
+    const expiresAt = getSessionExpiryDate();
+
+    await authRepository.createSession({
+      id: sessionId,
+      userId: user.id,
+      refreshTokenHash: hashRefreshToken(refreshToken),
+      userAgent: metadata.userAgent,
+      ipAddress: getClientIpAddress(
+        metadata.forwardedFor,
+        metadata.remoteAddress
+      ),
+      expiresAt,
+    });
+
+    const accessToken = await signAccessToken({
+      sub: user.id,
+      sid: sessionId,
+      email: user.email,
+    });
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name ?? null,
+        createdAt: user.createdAt.toISOString(),
+      },
+      accessToken,
+      refreshToken,
+      session: {
+        id: sessionId,
+        expiresAt: expiresAt.toISOString(),
+      },
+    };
+  },
+
+  async login(
+    input: LoginUserInput,
+    metadata: {
+      userAgent?: string;
+      forwardedFor?: string;
+      remoteAddress?: string;
+    }
+  ): Promise<LoginResponse> {
+    const email = input.email.trim().toLowerCase();
+
+    const user = await authRepository.findUserByEmail(email);
+
+    if (!user) {
+      throw new HttpException(
+        "Invalid email or password",
+        HTTPSTATUS.UNAUTHORIZED,
+        ErrorCode.AUTH_INVALID_CREDENTIALS
+      );
+    }
+
+    const isPasswordValid = await verifyPassword(
+      user.passwordHash,
+      input.password
+    );
+
+    if (!isPasswordValid) {
+      throw new HttpException(
+        "Invalid email or password",
+        HTTPSTATUS.UNAUTHORIZED,
+        ErrorCode.AUTH_INVALID_CREDENTIALS
+      );
+    }
 
     const refreshToken = generateRefreshToken();
     const sessionId = generateSessionId();

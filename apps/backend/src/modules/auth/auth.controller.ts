@@ -1,4 +1,6 @@
 import {
+  loginResponseSchema,
+  loginUserSchema,
   registerResponseSchema,
   registerUserSchema,
 } from "@repo/api-contracts";
@@ -16,7 +18,7 @@ export const registerController: RequestHandler = async (req, res) => {
     forwardedFor: req.get("x-forwarded-for"),
     remoteAddress: req.socket.remoteAddress,
   });
-  console.log("Register response:", response);
+
   const payload = registerResponseSchema.parse(response);
 
   setAuthenticationCookies({
@@ -26,4 +28,24 @@ export const registerController: RequestHandler = async (req, res) => {
   });
 
   res.status(HTTPSTATUS.CREATED).json(payload);
+};
+
+export const loginController: RequestHandler = async (req, res) => {
+  const body = loginUserSchema.parse(req.body);
+
+  const response = await authService.login(body, {
+    userAgent: req.get("user-agent"),
+    forwardedFor: req.get("x-forwarded-for"),
+    remoteAddress: req.socket.remoteAddress,
+  });
+
+  const payload = loginResponseSchema.parse(response);
+
+  setAuthenticationCookies({
+    res,
+    accessToken: payload.accessToken,
+    refreshToken: payload.refreshToken,
+  });
+
+  res.status(HTTPSTATUS.OK).json(payload);
 };

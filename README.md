@@ -69,6 +69,25 @@ You can still use direct filters if needed:
 
 The root `dev:*` scripts load `.env` and `.env.development` automatically before starting the selected app.
 
+## Docker Development
+
+Use the production-style compose file when you want built images:
+
+- `docker compose up --build`
+
+Use the standalone development stack when you want backend, both frontend apps, and Postgres with live reload:
+
+- `docker compose -f docker-compose.dev.yml up --build`
+
+This development compose file:
+
+- mounts the repository into the container
+- runs `tsx watch` for the backend
+- runs `next dev` for `web-client`
+- runs `vite` for `web-admin`
+- regenerates Prisma client on backend container start
+- avoids rebuilding images for normal route, component, or service changes
+
 ## Environment Variables
 
 Configure local ports, hosts, API paths, and server directories in:

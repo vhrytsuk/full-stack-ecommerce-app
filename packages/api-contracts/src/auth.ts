@@ -14,6 +14,11 @@ export const registerUserSchema = z.object({
     .optional(),
 });
 
+export const loginUserSchema = z.object({
+  email: z.email().trim().toLowerCase(),
+  password: z.string().min(1, "Password is required"),
+});
+
 export const authUserSchema = z.object({
   id: z.string(),
   email: z.email(),
@@ -33,5 +38,9 @@ export const registerResponseSchema = z.object({
   session: authSessionSchema,
 });
 
+export const loginResponseSchema = registerResponseSchema;
+
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type RegisterResponse = z.infer<typeof registerResponseSchema>;
+export type LoginUserInput = z.infer<typeof loginUserSchema>;
+export type LoginResponse = z.infer<typeof loginResponseSchema>;

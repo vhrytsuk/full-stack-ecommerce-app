@@ -21,7 +21,9 @@
     "typecheck:backend": "pnpm --filter @repo/backend typecheck",
     "typecheck:web-client": "pnpm --filter @repo/web-client typecheck",
     "typecheck:web-admin": "pnpm --filter @repo/web-admin typecheck",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean",
+    "dev:docker": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up",
+    "prod:docker": "docker compose up"
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",

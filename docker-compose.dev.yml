@@ -1,0 +1,92 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: postgres-db-development-ecommerce
+    env_file:
+      - .env
+      - .env.development
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile.dev
+      args:
+        DATABASE_URL: ${DATABASE_URL}
+    command: sh -c "cd /app && CI=1 pnpm install --frozen-lockfile --force && pnpm --filter @repo/backend db:generate && pnpm --filter @repo/backend dev"
+    env_file:
+      - .env
+      - .env.development
+    environment:
+      NODE_ENV: development
+      BACKEND_HOST: 0.0.0.0
+      BACKEND_PORT: ${BACKEND_PORT}
+      BACKEND_API_BASE_PATH: ${BACKEND_API_BASE_PATH}
+      BACKEND_CORS_ORIGIN: ${BACKEND_CORS_ORIGIN}
+      BACKEND_UPLOADS_DIR: ${BACKEND_UPLOADS_DIR}
+      BACKEND_PUBLIC_DIR: ${BACKEND_PUBLIC_DIR}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    volumes:
+      - .:/app
+      - workspace_node_modules:/app/node_modules
+      - backend_node_modules:/app/apps/backend/node_modules
+      - workspace_pnpm_store:/pnpm/store
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web-client:
+    build:
+      context: .
+      dockerfile: apps/web-client/Dockerfile.dev
+    env_file:
+      - .env
+      - .env.development
+    environment:
+      NODE_ENV: development
+    ports:
+      - "${WEB_CLIENT_PORT}:3000"
+    volumes:
+      - .:/app
+      # Protect node_modules installed inside the image from being overwritten by the host mount
+      - /app/node_modules
+      - /app/apps/web-client/node_modules
+      - /app/apps/web-client/.next
+
+  web-admin:
+    build:
+      context: .
+      dockerfile: apps/web-admin/Dockerfile.dev
+    env_file:
+      - .env
+      - .env.development
+    environment:
+      NODE_ENV: development
+    ports:
+      - "${WEB_ADMIN_PORT}:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/web-admin/node_modules
+
+volumes:
+  db_data:
+  workspace_node_modules:
+  backend_node_modules:
+  workspace_pnpm_store:

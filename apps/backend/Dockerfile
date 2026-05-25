@@ -4,6 +4,9 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 WORKDIR /app
 
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
 FROM base AS build
 COPY . .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
@@ -14,9 +17,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY . .
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY --from=build /app/apps/backend/dist ./apps/backend/dist
+RUN chmod +x ./apps/backend/scripts/start.sh
 
 WORKDIR /app/apps/backend
 EXPOSE 4000
-CMD ["node", "dist/index.js"]
+CMD ["./scripts/start.sh"]

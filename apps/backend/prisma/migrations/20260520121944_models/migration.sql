@@ -1,0 +1,54 @@
+/*
+  Warnings:
+
+  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
+
+*/
+-- DropTable
+DROP TABLE "User";
+
+-- CreateTable
+CREATE TABLE "auth_sessions" (
+    "id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "refresh_token_hash" TEXT NOT NULL,
+    "user_agent" TEXT,
+    "ip_address" TEXT,
+    "expires_at" TIMESTAMP(3) NOT NULL,
+    "revoked_at" TIMESTAMP(3),
+    "last_used_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "auth_sessions_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "users" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "name" TEXT,
+    "password_hash" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "auth_sessions_refresh_token_hash_key" ON "auth_sessions"("refresh_token_hash");
+
+-- CreateIndex
+CREATE INDEX "auth_sessions_user_id_idx" ON "auth_sessions"("user_id");
+
+-- CreateIndex
+CREATE INDEX "auth_sessions_expires_at_idx" ON "auth_sessions"("expires_at");
+
+-- CreateIndex
+CREATE INDEX "auth_sessions_revoked_at_idx" ON "auth_sessions"("revoked_at");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- AddForeignKey
+ALTER TABLE "auth_sessions" ADD CONSTRAINT "auth_sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
