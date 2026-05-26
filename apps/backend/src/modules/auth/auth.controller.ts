@@ -96,6 +96,7 @@ export const logoutController: RequestHandler = async (req, res) => {
   res.status(HTTPSTATUS.NO_CONTENT).send();
 };
 
+// Testing JWT
 export const meController: RequestHandler = async (req, res) => {
   if (!req.user) {
     throw new UnauthorizedException("User is not authenticated");

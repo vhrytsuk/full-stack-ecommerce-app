@@ -1,0 +1,120 @@
+model Product {
+  id            String          @id @default(cuid())
+  name          String
+  slug          String          @unique
+  description   String?
+  status        ProductStatus   @default(DRAFT)
+  categoryId    String
+  category      Category        @relation(fields: [categoryId], references: [id])
+
+  // Option types attached to this product (e.g. Size, Color)
+  // Empty = simple product (single default variant)
+  optionTypes   OptionType[]
+
+  variants      Variant[]
+  images        ProductImage[]
+  tags          ProductTag[]
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([categoryId])
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+model OptionType {
+  id        String        @id @default(cuid())
+  name      String                       
+  position  Int           @default(0)   
+  productId String
+  product   Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  values    OptionValue[]
+
+  @@unique([productId, name])
+}
+
+model OptionValue {
+  id           String          @id @default(cuid())
+  value        String                     
+  position     Int             @default(0)
+  optionTypeId String
+  optionType   OptionType      @relation(fields: [optionTypeId], references: [id], onDelete: Cascade)
+  variantOptions VariantOption[]
+
+  @@unique([optionTypeId, value])
+}
+
+model Variant {
+  id            String          @id @default(cuid())
+  productId     String
+  product       Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  sku           String          @unique
+  price         Decimal         @db.Decimal(10, 2)
+  comparePrice  Decimal?        @db.Decimal(10, 2)  // crossed-out "was" price
+  costPrice     Decimal?        @db.Decimal(10, 2)  // for margin calc, never shown to customer
+
+  stock         Int             @default(0)
+  lowStockAt    Int             @default(5)          // trigger low-stock alert
+  trackStock    Boolean         @default(true)
+
+  weight        Decimal?        @db.Decimal(8, 2)    // grams, for shipping calc
+  isDefault     Boolean         @default(false)      // the pre-selected variant in the UI
+
+  options       VariantOption[] // e.g. [Color=Red, Size=XL]
+  images        VariantImage[]
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([productId])
+  @@index([sku])
+}
+
+model VariantOption {
+  id            String      @id @default(cuid())
+  variantId     String
+  variant       Variant     @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  optionValueId String
+  optionValue   OptionValue @relation(fields: [optionValueId], references: [id])
+
+  @@unique([variantId, optionValueId])
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  altText   String?
+  position  Int      @default(0)
+}
+
+model VariantImage {
+  id        String  @id @default(cuid())
+  variantId String
+  variant   Variant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  url       String
+  altText   String?
+  position  Int     @default(0)
+}
+
+model Tag {
+  id       String       @id @default(cuid())
+  name     String       @unique
+  products ProductTag[]
+}
+
+model ProductTag {
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tagId     String
+  tag       Tag     @relation(fields: [tagId], references: [id])
+
+  @@id([productId, tagId])
+}

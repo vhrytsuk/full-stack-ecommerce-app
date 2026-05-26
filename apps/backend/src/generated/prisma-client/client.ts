@@ -47,6 +47,56 @@ export { Prisma }
  */
 export type AuthSession = Prisma.AuthSessionModel
 /**
+ * Model Category
+ * 
+ */
+export type Category = Prisma.CategoryModel
+/**
+ * Model Product
+ * 
+ */
+export type Product = Prisma.ProductModel
+/**
+ * Model OptionType
+ * 
+ */
+export type OptionType = Prisma.OptionTypeModel
+/**
+ * Model OptionValue
+ * 
+ */
+export type OptionValue = Prisma.OptionValueModel
+/**
+ * Model Variant
+ * 
+ */
+export type Variant = Prisma.VariantModel
+/**
+ * Model VariantOption
+ * 
+ */
+export type VariantOption = Prisma.VariantOptionModel
+/**
+ * Model ProductImage
+ * 
+ */
+export type ProductImage = Prisma.ProductImageModel
+/**
+ * Model VariantImage
+ * 
+ */
+export type VariantImage = Prisma.VariantImageModel
+/**
+ * Model Tag
+ * 
+ */
+export type Tag = Prisma.TagModel
+/**
+ * Model ProductTag
+ * 
+ */
+export type ProductTag = Prisma.ProductTagModel
+/**
  * Model User
  * 
  */
