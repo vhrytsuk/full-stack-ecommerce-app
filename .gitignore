@@ -8,3 +8,4 @@ dist
 coverage
 .pnpm-store
 *.log
+PROJECT_CONTEXT.md

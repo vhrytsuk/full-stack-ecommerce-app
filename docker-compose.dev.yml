@@ -26,7 +26,7 @@ services:
       dockerfile: apps/backend/Dockerfile.dev
       args:
         DATABASE_URL: ${DATABASE_URL}
-    command: sh -c "cd /app && CI=1 pnpm install --frozen-lockfile --force && pnpm --filter @repo/backend db:generate && pnpm --filter @repo/backend dev"
+    command: sh -c "cd /app && pnpm install --frozen-lockfile && pnpm --filter @repo/backend db:generate && pnpm --filter @repo/backend exec prisma migrate deploy && pnpm --filter @repo/backend dev"
     env_file:
       - .env
       - .env.development
@@ -87,6 +87,7 @@ services:
 
 volumes:
   db_data:
+    name: full-stack-ecommerce-db-data
   workspace_node_modules:
   backend_node_modules:
   workspace_pnpm_store:

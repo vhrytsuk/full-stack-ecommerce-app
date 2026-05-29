@@ -78,6 +78,8 @@ Use the production-style compose file when you want built images:
 Use the standalone development stack when you want backend, both frontend apps, and Postgres with live reload:
 
 - `docker compose -f docker-compose.dev.yml up --build`
+- `pnpm dev:docker`
+- `pnpm dev:docker:build`
 
 This development compose file:
 
@@ -86,7 +88,18 @@ This development compose file:
 - runs `next dev` for `web-client`
 - runs `vite` for `web-admin`
 - regenerates Prisma client on backend container start
+- applies existing Prisma migrations with `prisma migrate deploy`
 - avoids rebuilding images for normal route, component, or service changes
+
+Postgres data is stored in the named Docker volume `full-stack-ecommerce-db-data`.
+Use `pnpm dev:docker:down` or `docker compose -f docker-compose.dev.yml down` to stop the stack while keeping data.
+Do not use `docker compose down -v` unless you intentionally want to delete the local database.
+
+Useful database commands while the dev stack is running:
+
+- `pnpm dev:docker:migrate`
+- `pnpm dev:docker:generate`
+- `pnpm dev:docker:seed`
 
 ## Environment Variables
 

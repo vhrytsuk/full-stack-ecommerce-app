@@ -16,7 +16,7 @@ import {
   hashRefreshToken,
 } from "../../utils/session-token";
 import { signAccessToken } from "../../utils/jwt";
-import { env } from "../../config/env.js";
+import { env } from "../../config/env";
 import { authRepository } from "./auth.repository";
 
 const getSessionExpiryDate = () => {

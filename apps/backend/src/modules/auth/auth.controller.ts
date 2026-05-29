@@ -6,14 +6,14 @@ import {
   registerUserSchema,
 } from "@repo/api-contracts";
 import type { RequestHandler } from "express";
-import { HTTPSTATUS } from "../../config/http.config.js";
+import { HTTPSTATUS } from "../../config/http.config";
 import {
   clearAuthenticationCookies,
   getRefreshTokenFromCookies,
   setAuthenticationCookies,
-} from "../../utils/cookies.js";
-import { UnauthorizedException } from "../../utils/catch-errors.js";
-import { authService } from "./auth.service.js";
+} from "../../utils/cookies";
+import { UnauthorizedException } from "../../utils/catch-errors";
+import { authService } from "./auth.service";
 
 export const registerController: RequestHandler = async (req, res) => {
   const body = registerUserSchema.parse(req.body);

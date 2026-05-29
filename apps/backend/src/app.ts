@@ -9,6 +9,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import { notFoundHandler } from "./middleware/notFoundHandler";
 import { authRouter } from "./modules/auth/auth.routes";
 import { dbRouter } from "./modules/db/db.routes";
+import { productRoute } from "./modules/product/product.routes";
 
 const app: Express = express();
 const BASE_PATH = env.BACKEND_API_BASE_PATH;
@@ -33,6 +34,7 @@ app.get(`${BASE_PATH}/health`, (_req, res) => {
 
 app.use(`${BASE_PATH}/auth`, authRouter);
 app.use(`${BASE_PATH}/db`, dbRouter);
+app.use(`${BASE_PATH}/products`, productRoute);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

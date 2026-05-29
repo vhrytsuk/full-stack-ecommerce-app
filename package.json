@@ -22,7 +22,12 @@
     "typecheck:web-client": "pnpm --filter @repo/web-client typecheck",
     "typecheck:web-admin": "pnpm --filter @repo/web-admin typecheck",
     "clean": "turbo run clean",
-    "dev:docker": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up",
+    "dev:docker": "docker compose -f docker-compose.dev.yml up",
+    "dev:docker:build": "docker compose -f docker-compose.dev.yml up --build",
+    "dev:docker:down": "docker compose -f docker-compose.dev.yml down",
+    "dev:docker:migrate": "docker compose -f docker-compose.dev.yml exec backend pnpm --filter @repo/backend exec prisma migrate deploy",
+    "dev:docker:generate": "docker compose -f docker-compose.dev.yml exec backend pnpm --filter @repo/backend db:generate",
+    "dev:docker:seed": "docker compose -f docker-compose.dev.yml exec backend pnpm --filter @repo/backend db:seed",
     "prod:docker": "docker compose up"
   },
   "devDependencies": {
