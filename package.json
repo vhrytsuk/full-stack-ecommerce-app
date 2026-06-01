@@ -28,6 +28,7 @@
     "dev:docker:migrate": "docker compose -f docker-compose.dev.yml exec backend pnpm --filter @repo/backend exec prisma migrate deploy",
     "dev:docker:generate": "docker compose -f docker-compose.dev.yml exec backend pnpm --filter @repo/backend db:generate",
     "dev:docker:seed": "docker compose -f docker-compose.dev.yml exec backend pnpm --filter @repo/backend db:seed",
+    "dev:docker:studio": "docker compose -f docker-compose.dev.yml exec backend sh -lc 'pnpm --filter @repo/backend exec prisma studio --url \"$DATABASE_URL\" --port 5555 --browser none'",
     "prod:docker": "docker compose up"
   },
   "devDependencies": {

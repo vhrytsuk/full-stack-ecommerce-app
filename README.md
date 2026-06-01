@@ -100,6 +100,11 @@ Useful database commands while the dev stack is running:
 - `pnpm dev:docker:migrate`
 - `pnpm dev:docker:generate`
 - `pnpm dev:docker:seed`
+- `pnpm dev:docker:studio`
+
+Prefer `pnpm dev:docker:studio` over `pnpm --filter @repo/backend db:studio` while using Docker.
+It runs Prisma Studio inside the backend container, so it uses the same `DATABASE_URL` as the API.
+Open Prisma Studio at `http://localhost:5555`.
 
 ## Environment Variables
 
