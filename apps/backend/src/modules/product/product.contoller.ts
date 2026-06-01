@@ -6,6 +6,8 @@ import {
   type GetProductByIdParams,
   type GetProductsQueryParams,
   getProductByIdParamsSchema,
+  createProductSchema,
+  CreateProductInput,
 } from "@repo/api-contracts";
 
 export class ProductController {
@@ -37,5 +39,34 @@ export class ProductController {
     const product = await this.productService.getProductById(id);
 
     res.status(HTTPSTATUS.OK).json(product);
+  };
+
+  createProduct: RequestHandler = async (req, res) => {
+    const body = createProductSchema.parse(req.body);
+
+    const newProduct = await this.productService.createProduct(body);
+
+    res.status(HTTPSTATUS.CREATED).json(newProduct);
+  };
+
+  updateProduct: RequestHandler<
+    GetProductByIdParams,
+    unknown,
+    CreateProductInput
+  > = async (req, res) => {
+    const { id } = getProductByIdParamsSchema.parse(req.params);
+    const body = createProductSchema.parse(req.body);
+
+    const updatedProduct = await this.productService.updateProduct(id, body);
+
+    res.status(HTTPSTATUS.OK).json(updatedProduct);
+  };
+
+  deleteProduct: RequestHandler<GetProductByIdParams> = async (req, res) => {
+    const { id } = getProductByIdParamsSchema.parse(req.params);
+
+    await this.productService.deleteProduct(id);
+
+    res.status(HTTPSTATUS.NO_CONTENT).send();
   };
 }

@@ -1,4 +1,5 @@
 import {
+  type CreateProductInput,
   getProductsResponseSchema,
   productDetailSchema,
   type GetProductByIdResponse,
@@ -8,6 +9,7 @@ import {
 import { ProductRepository } from "./product.repository";
 import { NotFoundException } from "../../utils/catch-errors";
 import { toJsonValue } from "../../utils/toJsonValue";
+import { mapCreateProductInputToData } from "./product.mapper";
 
 export class ProductService {
   private productRepository: ProductRepository;
@@ -47,5 +49,34 @@ export class ProductService {
     }
 
     return productDetailSchema.parse(toJsonValue(product));
+  }
+
+  async createProduct(productData: CreateProductInput) {
+    const newProduct = await this.productRepository.createProduct(
+      mapCreateProductInputToData(productData)
+    );
+
+    return productDetailSchema.parse(toJsonValue(newProduct));
+  }
+
+  async updateProduct(id: string, productData: CreateProductInput) {
+    const updatedProduct = await this.productRepository.updateProduct(
+      id,
+      mapCreateProductInputToData(productData)
+    );
+
+    if (!updatedProduct) {
+      throw new NotFoundException("Product not found");
+    }
+
+    return productDetailSchema.parse(toJsonValue(updatedProduct));
+  }
+
+  async deleteProduct(id: string) {
+    const deleted = await this.productRepository.deleteProduct(id);
+
+    if (!deleted) {
+      throw new NotFoundException("Product not found");
+    }
   }
 }
