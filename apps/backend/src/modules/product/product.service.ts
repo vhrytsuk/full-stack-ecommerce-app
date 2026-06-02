@@ -5,11 +5,15 @@ import {
   type GetProductByIdResponse,
   type GetProductsQueryParams,
   type GetProductsResponse,
+  UpdateProductInput,
 } from "@repo/api-contracts";
 import { ProductRepository } from "./product.repository";
 import { NotFoundException } from "../../utils/catch-errors";
 import { toJsonValue } from "../../utils/toJsonValue";
-import { mapCreateProductInputToData } from "./product.mapper";
+import {
+  mapCreateProductInputToData,
+  mapUpdateProductInputToData,
+} from "./product.mapper";
 
 export class ProductService {
   private productRepository: ProductRepository;
@@ -59,10 +63,10 @@ export class ProductService {
     return productDetailSchema.parse(toJsonValue(newProduct));
   }
 
-  async updateProduct(id: string, productData: CreateProductInput) {
+  async updateProduct(id: string, productData: UpdateProductInput) {
     const updatedProduct = await this.productRepository.updateProduct(
       id,
-      mapCreateProductInputToData(productData)
+      mapUpdateProductInputToData(productData)
     );
 
     if (!updatedProduct) {

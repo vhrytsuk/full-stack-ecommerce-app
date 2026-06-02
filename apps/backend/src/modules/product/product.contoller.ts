@@ -7,7 +7,8 @@ import {
   type GetProductsQueryParams,
   getProductByIdParamsSchema,
   createProductSchema,
-  CreateProductInput,
+  UpdateProductInput,
+  updateProductSchema,
 } from "@repo/api-contracts";
 
 export class ProductController {
@@ -52,10 +53,10 @@ export class ProductController {
   updateProduct: RequestHandler<
     GetProductByIdParams,
     unknown,
-    CreateProductInput
+    UpdateProductInput
   > = async (req, res) => {
     const { id } = getProductByIdParamsSchema.parse(req.params);
-    const body = createProductSchema.parse(req.body);
+    const body = updateProductSchema.parse(req.body);
 
     const updatedProduct = await this.productService.updateProduct(id, body);
 

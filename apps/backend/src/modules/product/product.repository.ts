@@ -1,5 +1,5 @@
 import { type Prisma } from "../../lib/prisma";
-import type { CreateProductData } from "./product.mapper";
+import type { CreateProductData, UpdateProductData } from "./product.mapper";
 
 const productDetailInclude = {
   category: true,
@@ -123,7 +123,7 @@ export class ProductRepository {
     });
   }
 
-  updateProduct(id: string, productData: CreateProductData) {
+  updateProduct(id: string, productData: UpdateProductData) {
     return this.prisma.product.update({
       where: { id },
       data: productData.product,

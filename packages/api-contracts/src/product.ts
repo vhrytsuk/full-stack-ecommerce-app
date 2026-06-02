@@ -178,6 +178,113 @@ export const createProductSchema = z
     });
   });
 
+export const updateProductSchema = z
+  .object({
+    name: z.string().trim().min(1).max(200).optional(),
+    slug: z
+      .string()
+      .trim()
+      .min(1)
+      .max(220)
+      .regex(
+        /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+        "Slug must use lowercase letters, numbers, and hyphens"
+      )
+      .optional(),
+    description: z.string().trim().min(1).max(5_000).nullable().optional(),
+    status: productStatusSchema.optional(),
+    categoryId: z.string().trim().min(1, "Category is required").optional(),
+    images: z.array(createProductImageSchema).optional(),
+    tags: z.array(createProductTagSchema).optional(),
+    optionTypes: z.array(createProductOptionTypeSchema).optional(),
+    variants: z
+      .array(createProductVariantSchema)
+      .min(1, "At least one variant is required")
+      .optional(),
+  })
+  .refine((product) => Object.keys(product).length > 0, {
+    message: "At least one product field is required",
+  })
+  .superRefine((product, ctx) => {
+    if (!product.variants) {
+      return;
+    }
+
+    const defaultVariants = product.variants.filter(
+      (variant) => variant.isDefault
+    );
+
+    if (defaultVariants.length !== 1) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["variants"],
+        message: "Exactly one variant must be marked as default",
+      });
+    }
+
+    if (!product.optionTypes) {
+      return;
+    }
+
+    const optionValueMap = new Map(
+      product.optionTypes.map((optionType) => [
+        optionType.name,
+        new Set(optionType.values.map((optionValue) => optionValue.value)),
+      ])
+    );
+
+    product.variants.forEach((variant, variantIndex) => {
+      if (product.optionTypes?.length === 0 && variant.options.length > 0) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["variants", variantIndex, "options"],
+          message: "Simple products cannot have variant options",
+        });
+      }
+
+      if (
+        product.optionTypes &&
+        product.optionTypes.length > 0 &&
+        variant.options.length !== product.optionTypes.length
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["variants", variantIndex, "options"],
+          message:
+            "Variant must include one value for each product option type",
+        });
+      }
+
+      variant.options.forEach((option, optionIndex) => {
+        const values = optionValueMap.get(option.optionTypeName);
+
+        if (!values) {
+          ctx.addIssue({
+            code: "custom",
+            path: [
+              "variants",
+              variantIndex,
+              "options",
+              optionIndex,
+              "optionTypeName",
+            ],
+            message: "Variant option type is not defined on the product",
+          });
+          return;
+        }
+
+        if (!values.has(option.value)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["variants", variantIndex, "options", optionIndex, "value"],
+            message:
+              "Variant option value is not defined on the product option type",
+          });
+        }
+      });
+    });
+  });
+
 export const categorySchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -295,3 +402,4 @@ export type GetProductByIdResponse = ProductDetail;
 export type GetProductsResponse = z.infer<typeof getProductsResponseSchema>;
 
 export type CreateProductInput = z.infer<typeof createProductSchema>;
+export type UpdateProductInput = z.infer<typeof updateProductSchema>;

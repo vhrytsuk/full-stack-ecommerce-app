@@ -1,6 +1,10 @@
-import type { CreateProductInput } from "@repo/api-contracts";
+import type {
+  CreateProductInput,
+  UpdateProductInput,
+} from "@repo/api-contracts";
 import type {
   ProductCreateInput,
+  ProductUpdateInput,
   VariantUncheckedCreateInput,
 } from "../../generated/prisma-client/models";
 
@@ -14,6 +18,10 @@ type CreateProductVariantData = Omit<
 export type CreateProductData = {
   product: ProductCreateInput;
   variants: CreateProductVariantData[];
+};
+
+export type UpdateProductData = {
+  product: ProductUpdateInput;
 };
 
 export const mapCreateProductInputToData = (
@@ -74,3 +82,37 @@ export const mapCreateProductInputToData = (
     options: variant.options,
   })),
 });
+
+export const mapUpdateProductInputToData = (
+  input: UpdateProductInput
+): UpdateProductData => {
+  const product: ProductUpdateInput = {};
+
+  if (input.name !== undefined) {
+    product.name = input.name;
+  }
+
+  if (input.slug !== undefined) {
+    product.slug = input.slug;
+  }
+
+  if (input.description !== undefined) {
+    product.description = input.description;
+  }
+
+  if (input.status !== undefined) {
+    product.status = input.status;
+  }
+
+  if (input.categoryId !== undefined) {
+    product.category = {
+      connect: {
+        id: input.categoryId,
+      },
+    };
+  }
+
+  return {
+    product,
+  };
+};

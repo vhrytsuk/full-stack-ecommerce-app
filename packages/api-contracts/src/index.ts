@@ -1,6 +1,7 @@
 import { z } from "zod";
 export * from "./auth.js";
 export * from "./product.js";
+export * from "./category.js";
 
 export const healthcheckSchema = z.object({
   status: z.literal("ok"),
