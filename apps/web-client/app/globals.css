@@ -1,0 +1,84 @@
+@import "tailwindcss";
+@import "@repo/theme/theme.css";
+@import "@repo/ui/globals.css";
+
+@source "../../../packages/ui/src";
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: color-mix(in srgb, var(--color-ink) 30%, transparent);
+  }
+
+  html {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}
+
+@utility container-storefront {
+  width: min(calc(100% - 2rem), var(--spacing-storefront));
+  margin-inline: auto;
+}
+
+@utility type-heading-hero {
+  font-family: var(--font-display);
+  font-size: var(--text-heading-48);
+  font-weight: 600;
+  line-height: var(--text-heading-48--line-height);
+  letter-spacing: 0.04em;
+}
+
+@utility type-heading-section {
+  font-family: var(--font-display);
+  font-size: var(--text-heading-36);
+  font-weight: 600;
+  line-height: var(--text-heading-36--line-height);
+  letter-spacing: 0.04em;
+}
+
+@utility type-heading-card {
+  font-family: var(--font-display);
+  font-size: var(--text-heading-24);
+  font-weight: 600;
+  line-height: var(--text-heading-24--line-height);
+  letter-spacing: 0.03em;
+}
+
+@utility type-title-lg {
+  font-size: var(--text-title-20);
+  font-weight: 600;
+  line-height: var(--text-title-20--line-height);
+}
+
+@utility type-title {
+  font-size: var(--text-title-16);
+  font-weight: 500;
+  line-height: var(--text-title-16--line-height);
+}
+
+@utility type-body {
+  font-size: var(--text-title-14);
+  font-weight: 400;
+  line-height: var(--text-title-14--line-height);
+}
+
+@utility type-caption {
+  font-size: var(--text-title-12);
+  font-weight: 400;
+  line-height: var(--text-title-12--line-height);
+}

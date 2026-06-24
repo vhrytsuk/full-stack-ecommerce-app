@@ -14,9 +14,13 @@
   },
   "dependencies": {
     "@repo/api-contracts": "workspace:*",
+    "@repo/theme": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
+    "@tailwindcss/postcss": "catalog:",
+    "@tailwindcss/vite": "^4.3.1",
     "next": "catalog:",
+    "postcss": "^8.5.15",
     "react": "catalog:",
     "react-dom": "catalog:",
     "zod": "^4.1.12"
@@ -25,6 +29,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/react": "catalog:",
-    "@types/react-dom": "catalog:"
+    "@types/react-dom": "catalog:",
+    "tailwindcss": "catalog:"
   }
 }

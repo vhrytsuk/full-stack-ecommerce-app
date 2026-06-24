@@ -25,15 +25,23 @@ export class ProductService {
   async getAllProducts(
     params: GetProductsQueryParams
   ): Promise<GetProductsResponse> {
-    const { limit, page } = params;
+    const { limit, page, search, categorySlug, sort } = params;
     const offset = (page - 1) * limit;
+    const normalizedSearch = search ?? undefined;
+    const normalizedCategorySlug = categorySlug ?? undefined;
 
     const products = await this.productRepository.getProducts({
       limit,
       offset,
+      categorySlug: normalizedCategorySlug,
+      search: normalizedSearch,
+      sort,
     });
 
-    const totalCount = await this.productRepository.getProductsCount();
+    const totalCount = await this.productRepository.getProductsCount({
+      categorySlug: normalizedCategorySlug,
+      search: normalizedSearch,
+    });
 
     return getProductsResponseSchema.parse(
       toJsonValue({

@@ -5,6 +5,21 @@ export const productStatusSchema = z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]);
 export const getProductsQuerySchema = z.object({
   limit: z.coerce.number().int().positive().max(100).default(20),
   page: z.coerce.number().int().positive().default(1),
+  search: z
+    .string()
+    .trim()
+    .max(100)
+    .transform((value) => (value.length > 0 ? value : undefined))
+    .optional(),
+  categorySlug: z
+    .string()
+    .trim()
+    .min(1)
+    .transform((value) => (value.length > 0 ? value : undefined))
+    .optional(),
+  sort: z
+    .enum(["price_asc", "price_desc", "createdAt_asc", "createdAt_desc"])
+    .default("createdAt_desc"),
 });
 
 export const getProductByIdParamsSchema = z.object({

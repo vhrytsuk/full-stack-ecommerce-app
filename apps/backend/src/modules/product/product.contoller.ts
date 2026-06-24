@@ -26,12 +26,15 @@ export class ProductController {
   > = async (req, res) => {
     const query = getProductsQuerySchema.parse(req.query);
 
-    const products = await this.productService.getAllProducts({
+    const data = await this.productService.getAllProducts({
       limit: query.limit,
       page: query.page,
+      search: query.search,
+      categorySlug: query.categorySlug,
+      sort: query.sort,
     });
 
-    res.status(HTTPSTATUS.OK).json(products);
+    res.status(HTTPSTATUS.OK).json(data);
   };
 
   getProductById: RequestHandler<GetProductByIdParams> = async (req, res) => {

@@ -1,0 +1,92 @@
+/*
+ * Design tokens derived from the "Full E-Commerce Website UI UX Design"
+ * Figma community file.
+ *
+ * This file intentionally contains theme values only. Applications remain
+ * responsible for importing Tailwind and registering their source files.
+ */
+@theme static {
+  /* Typography scale */
+  --text-caption-11: 0.6875rem;
+  --text-caption-11--line-height: 1.125rem;
+  --text-title-12: 0.75rem;
+  --text-title-12--line-height: 1.125rem;
+  --text-title-14: 0.875rem;
+  --text-title-14--line-height: 1.3125rem;
+  --text-title-16: 1rem;
+  --text-title-16--line-height: 1.5rem;
+  --text-title-20: 1.25rem;
+  --text-title-20--line-height: 1.75rem;
+  --text-title-24: 1.5rem;
+  --text-title-24--line-height: 2rem;
+  --text-heading-24: 1.5rem;
+  --text-heading-24--line-height: 1.5rem;
+  --text-heading-32: 2rem;
+  --text-heading-32--line-height: 1.875rem;
+  --text-heading-36: 2.25rem;
+  --text-heading-36--line-height: 3rem;
+  --text-heading-48: 3rem;
+  --text-heading-48--line-height: 3.75rem;
+  --text-heading-54: 3.375rem;
+  --text-heading-54--line-height: 4rem;
+  --text-heading-64: 4rem;
+  --text-heading-64--line-height: 4.25rem;
+  --text-heading-90: 5.625rem;
+  --text-heading-90--line-height: 6.125rem;
+  --text-heading-110: 6.875rem;
+  --text-heading-110--line-height: 7.1875rem;
+
+  /* Figma color styles */
+  --color-primary: #ffffff;
+  --color-primary-dark: #363738;
+  --color-secondary: #f5f5f5;
+  --color-secondary-warm: #fefaf1;
+  --color-accent: #db4444;
+  --color-accent-hover: #e07575;
+  --color-accent-cool: #a0bce0;
+  --color-success: #00ff66;
+  --color-rating: #ffad33;
+  --color-ink: #000000;
+  --color-muted: #7d8184;
+  --color-on-dark: #fafafa;
+
+  /* Semantic aliases */
+  --color-background: var(--color-primary);
+  --color-foreground: var(--color-ink);
+  --color-surface: var(--color-secondary);
+  --color-surface-warm: var(--color-secondary-warm);
+  --color-brand: var(--color-accent);
+  --color-brand-hover: var(--color-accent-hover);
+  --color-disabled: var(--color-muted);
+
+  /* Geometry */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-round: 9999px;
+
+  --spacing-storefront: 73.125rem;
+  --spacing-page-gutter: 8.4375rem;
+  --spacing-section: 8.75rem;
+  --spacing-section-sm: 5rem;
+  --spacing-card: 16.875rem;
+  --spacing-control: 3.5rem;
+  --spacing-control-sm: 2.75rem;
+  --spacing-icon-sm: 1.5rem;
+  --spacing-icon-md: 2rem;
+  --spacing-icon-lg: 2.5rem;
+  --spacing-icon-xl: 2.875rem;
+
+  /* Effects */
+  --shadow-surface: 0 1px 13px rgb(0 0 0 / 5%);
+  --shadow-menu: 0 4px 4px rgb(0 0 0 / 25%);
+  --blur-menu: 75px;
+
+  /* The source design is desktop-first at 1440px with a 1170px content area. */
+  --breakpoint-xs: 30rem;
+  --breakpoint-3xl: 90rem;
+}
+
+@theme inline {
+  --font-sans: var(--font-poppins), "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter), "Inter", ui-sans-serif, system-ui, sans-serif;
+}

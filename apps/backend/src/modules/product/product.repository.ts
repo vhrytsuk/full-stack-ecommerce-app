@@ -1,4 +1,8 @@
-import { type Prisma } from "../../lib/prisma";
+import type { GetProductsQueryParams } from "@repo/api-contracts";
+import {
+  Prisma,
+  type PrismaClient,
+} from "../../generated/prisma-client/client";
 import type { CreateProductData, UpdateProductData } from "./product.mapper";
 
 const productDetailInclude = {
@@ -31,21 +35,68 @@ const productDetailInclude = {
 } as const;
 
 export class ProductRepository {
-  private prisma: Prisma;
+  private prisma: PrismaClient;
 
-  constructor(prismaInstance: Prisma) {
+  constructor(prismaInstance: PrismaClient) {
     this.prisma = prismaInstance;
   }
 
-  getProducts(params: { limit: number; offset: number }) {
+  private buildProductsWhere(params: {
+    categorySlug?: string;
+    search?: string;
+  }): Prisma.ProductWhereInput {
+    return {
+      ...(params.categorySlug && { category: { slug: params.categorySlug } }),
+      ...(params.search && {
+        OR: [
+          { name: { contains: params.search, mode: "insensitive" } },
+          { description: { contains: params.search, mode: "insensitive" } },
+        ],
+      }),
+    };
+  }
+
+  private buildProductsOrderBy(
+    sort: GetProductsQueryParams["sort"]
+  ): Prisma.ProductOrderByWithRelationInput {
+    switch (sort) {
+      case "createdAt_asc":
+        return { createdAt: "asc" };
+      case "createdAt_desc":
+        return { createdAt: "desc" };
+      case "price_asc":
+      case "price_desc":
+        return { createdAt: "desc" };
+      default:
+        return { createdAt: "desc" };
+    }
+  }
+
+  getProducts(params: {
+    limit: number;
+    offset: number;
+    categorySlug?: string;
+    search?: string;
+    sort: GetProductsQueryParams["sort"];
+  }) {
     return this.prisma.product.findMany({
       take: params.limit,
       skip: params.offset,
+      where: this.buildProductsWhere({
+        categorySlug: params.categorySlug,
+        search: params.search,
+      }),
+      orderBy: this.buildProductsOrderBy(params.sort),
     });
   }
 
-  getProductsCount() {
-    return this.prisma.product.count();
+  getProductsCount(params: { categorySlug?: string; search?: string }) {
+    return this.prisma.product.count({
+      where: this.buildProductsWhere({
+        categorySlug: params.categorySlug,
+        search: params.search,
+      }),
+    });
   }
 
   getProductById(id: string) {

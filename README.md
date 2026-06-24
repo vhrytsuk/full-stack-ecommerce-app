@@ -13,6 +13,9 @@ This repository uses `pnpm` workspaces and Turborepo.
 - `packages/eslint-config`: Shared ESLint configs
 - `packages/typescript-config`: Shared TypeScript configs
 
+The storefront follows the FSD-lite conventions documented in
+[`docs/web-client-architecture.md`](docs/web-client-architecture.md).
+
 ## Commands
 
 - `pnpm install`
