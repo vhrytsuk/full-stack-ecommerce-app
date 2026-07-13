@@ -20,6 +20,18 @@ const en = {
     signUp: "Sign up",
     signOut: "Sign out",
   },
+  auth: {
+    signIn: {
+      title: "Sign in",
+      subtitle: "Welcome back. Enter your details to continue.",
+      emailLabel: "Email",
+      emailPlaceholder: "you@example.com",
+      passwordLabel: "Password",
+      submit: "Sign in",
+      noAccount: "Don't have an account?",
+      signUpLink: "Sign up",
+    },
+  },
 } as const;
 
 export default en;
