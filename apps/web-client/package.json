@@ -19,6 +19,7 @@
     "@repo/utils": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@tailwindcss/vite": "^4.3.1",
+    "lucide-react": "^1.21.0",
     "next": "catalog:",
     "postcss": "^8.5.15",
     "react": "catalog:",

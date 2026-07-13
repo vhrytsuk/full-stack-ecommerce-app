@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Inter, Poppins } from "next/font/google";
 
+import { SiteHeader } from "@/widgets/siteHeader";
+
 import "./globals.css";
 
 const poppins = Poppins({
@@ -16,8 +18,11 @@ const inter = Inter({
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${poppins.variable} ${inter.variable}`}>{children}</body>
+    <html lang='en'>
+      <body className={`${poppins.variable} ${inter.variable}`}>
+        <SiteHeader />
+        {children}
+      </body>
     </html>
   );
 }
