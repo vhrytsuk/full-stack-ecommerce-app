@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import {
   ACCESS_TOKEN_COOKIE,
   REFRESH_TOKEN_COOKIE,
-} from "@/shared/api/authenticationCookieNames";
+} from "@/shared/api/constants";
 
 const API_BASE_URL =
   process.env.API_BASE_URL_INTERNAL ?? process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -14,7 +14,7 @@ const ACCESS_TOKEN_MAX_AGE_SECONDS = 15 * 60;
 const EXPIRY_SKEW_MS = 10_000;
 
 const protectedRoutes = ["/contact"];
-const publicRoutes = ["/sign-in"];
+const publicRoutes = ["/sign-in", "/sign-up"];
 
 type RefreshPayload = {
   accessToken: string;

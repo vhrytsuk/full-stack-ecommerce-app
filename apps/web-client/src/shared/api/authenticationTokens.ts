@@ -1,13 +1,6 @@
 import { cookies } from "next/headers";
 
-export {
-  ACCESS_TOKEN_COOKIE,
-  REFRESH_TOKEN_COOKIE,
-} from "./authenticationCookieNames";
-import {
-  ACCESS_TOKEN_COOKIE,
-  REFRESH_TOKEN_COOKIE,
-} from "./authenticationCookieNames";
+import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "./constants";
 const ACCESS_TOKEN_MAX_AGE_SECONDS = 15 * 60;
 
 type AuthenticationTokens = {

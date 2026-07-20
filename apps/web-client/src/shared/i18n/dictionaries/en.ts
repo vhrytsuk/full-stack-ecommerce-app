@@ -31,6 +31,18 @@ const en = {
       noAccount: "Don't have an account?",
       signUpLink: "Sign up",
     },
+    signUp: {
+      title: "Sign up",
+      subtitle: "Create your account to continue.",
+      nameLabel: "Name",
+      namePlaceholder: "Jane Doe",
+      emailLabel: "Email",
+      emailPlaceholder: "you@example.com",
+      passwordLabel: "Password",
+      submit: "Sign up",
+      hasAccount: "Already have an account?",
+      signInLink: "Sign in",
+    },
   },
 } as const;
 
