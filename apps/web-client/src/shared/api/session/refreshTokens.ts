@@ -4,7 +4,7 @@ import { refreshResponseSchema } from "@repo/api-contracts";
 import { clientConfig } from "@/shared/config";
 
 import { ApiError } from "../../utils/ApiError";
-import { REFRESH_TOKEN_COOKIE } from "../authenticationTokens";
+import { REFRESH_TOKEN_COOKIE } from "../constants";
 /**
  * Pure refresh call. Sends the given refresh token to the backend
  * `/auth/refresh` endpoint and returns the rotated tokens.
