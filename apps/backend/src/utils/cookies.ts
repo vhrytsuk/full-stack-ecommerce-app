@@ -35,7 +35,7 @@ export const setAccessTokenCookie = (res: Response, accessToken: string) => {
   return res.cookie(
     ACCESS_TOKEN_COOKIE_NAME,
     accessToken,
-    getAccessTokenCookieOptions(),
+    getAccessTokenCookieOptions()
   );
 };
 
@@ -43,7 +43,7 @@ export const setRefreshTokenCookie = (res: Response, refreshToken: string) => {
   return res.cookie(
     REFRESH_TOKEN_COOKIE_NAME,
     refreshToken,
-    getRefreshTokenCookieOptions(),
+    getRefreshTokenCookieOptions()
   );
 };
 

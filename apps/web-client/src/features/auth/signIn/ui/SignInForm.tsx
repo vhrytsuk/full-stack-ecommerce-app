@@ -1,13 +1,15 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { startTransition, useActionState, useMemo } from "react";
+import { type FieldErrors, useForm } from "react-hook-form";
 
 import { Field } from "@repo/ui/components/forms/field";
 
 import { signInAction } from "../api/signIn";
 import { initialSignInState } from "../model/signInTypes";
-import { signInSchema } from "../model/signInSchema";
-import { SignInSubmitButton } from "./SignInSubmitButton";
+import { signInSchema, type SignInValues } from "../model/signInSchema";
+import { Button } from "@ui/components/button";
 
 export type SignInFormLabels = {
   emailLabel: string;
@@ -16,47 +18,53 @@ export type SignInFormLabels = {
   submit: string;
 };
 
-type FieldErrors = Partial<Record<"email" | "password", string>>;
+function getServerErrors(
+  state: typeof initialSignInState
+): FieldErrors<SignInValues> | undefined {
+  if (state.status !== "error" || !state.fieldErrors) {
+    return undefined;
+  }
+
+  return {
+    email: state.fieldErrors.email?.[0]
+      ? { type: "server", message: state.fieldErrors.email[0] }
+      : undefined,
+    password: state.fieldErrors.password?.[0]
+      ? { type: "server", message: state.fieldErrors.password[0] }
+      : undefined,
+  };
+}
 
 export function SignInForm({ labels }: { labels: SignInFormLabels }) {
   const [state, formAction, pending] = useActionState(
     signInAction,
     initialSignInState
   );
-  const [clientErrors, setClientErrors] = useState<FieldErrors>({});
+  const serverErrors = useMemo(() => getServerErrors(state), [state]);
 
-  // Server errors are the source of truth after a submit; client-side checks
-  // only pre-empt an obviously invalid request.
-  const emailError = clientErrors.email ?? state.fieldErrors?.email?.[0];
-  const passwordError =
-    clientErrors.password ?? state.fieldErrors?.password?.[0];
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInValues>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: { email: "", password: "" },
+    errors: serverErrors,
+  });
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    const parsed = signInSchema.safeParse({
-      email: new FormData(event.currentTarget).get("email"),
-      password: new FormData(event.currentTarget).get("password"),
+  // RHF validates first; on success we forward the values to the Server Action.
+  const onSubmit = handleSubmit((values) => {
+    const formData = new FormData();
+    formData.set("email", values.email);
+    formData.set("password", values.password);
+
+    startTransition(() => {
+      formAction(formData);
     });
-
-    if (!parsed.success) {
-      event.preventDefault();
-      const { fieldErrors } = parsed.error.flatten();
-      setClientErrors({
-        email: fieldErrors.email?.[0],
-        password: fieldErrors.password?.[0],
-      });
-      return;
-    }
-
-    setClientErrors({});
-  }
+  });
 
   return (
-    <form
-      action={formAction}
-      onSubmit={handleSubmit}
-      noValidate
-      className='flex flex-col gap-4'
-    >
+    <form onSubmit={onSubmit} noValidate className='flex flex-col gap-4'>
       {state.status === "error" && state.message ? (
         <p role='alert' className='text-sm text-destructive'>
           {state.message}
@@ -65,24 +73,31 @@ export function SignInForm({ labels }: { labels: SignInFormLabels }) {
 
       <Field
         id='email'
-        name='email'
         type='email'
         autoComplete='email'
         label={labels.emailLabel}
         placeholder={labels.emailPlaceholder}
-        error={emailError}
+        error={errors.email?.message}
+        {...register("email")}
       />
 
       <Field
         id='password'
-        name='password'
         type='password'
         autoComplete='current-password'
         label={labels.passwordLabel}
-        error={passwordError}
+        error={errors.password?.message}
+        {...register("password")}
       />
 
-      <SignInSubmitButton label={labels.submit} pending={pending} />
+      <Button
+        type='submit'
+        className='w-full'
+        disabled={pending}
+        aria-busy={pending}
+      >
+        {pending ? `${labels.submit}…` : labels.submit}
+      </Button>
     </form>
   );
 }

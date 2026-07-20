@@ -1,12 +1,12 @@
 "use server";
 
-import type { LoginResponse } from "@repo/api-contracts";
+import { loginResponseSchema } from "@repo/api-contracts";
 import { redirect } from "next/navigation";
 
 import {
   ApiError,
-  forwardSetCookies,
   parseJson,
+  saveAuthenticationTokens,
   serverFetch,
 } from "@/shared/api";
 
@@ -17,9 +17,8 @@ import { signInSchema } from "../model/signInSchema";
  * Sign-in Server Action (BFF).
  *
  * Server Actions are public endpoints, so credentials are always validated
- * here with the shared Zod contract before hitting the backend. On success the
- * backend's HttpOnly session cookies are forwarded to the browser, keeping
- * tokens out of client JavaScript.
+ * here with the shared Zod contract before hitting the backend. On success,
+ * tokens returned by the backend are stored as BFF-owned HttpOnly cookies.
  */
 export async function signInAction(
   _prevState: SignInFormState,
@@ -47,12 +46,16 @@ export async function signInAction(
     const response = await serverFetch("/auth/login", {
       method: "POST",
       body: parsed.data,
+      auth: false,
     });
 
-    // Validate the response shape via the shared contract, then hand the
-    // backend's HttpOnly cookies to the browser.
-    await parseJson<LoginResponse>(response);
-    await forwardSetCookies(response);
+    const payload = loginResponseSchema.parse(await parseJson(response));
+
+    await saveAuthenticationTokens({
+      accessToken: payload.accessToken,
+      refreshToken: payload.refreshToken,
+      refreshTokenExpiresAt: payload.session.expiresAt,
+    });
   } catch (error) {
     if (error instanceof ApiError) {
       return {
@@ -61,6 +64,10 @@ export async function signInAction(
           error.status === 401 ? "Invalid email or password." : error.message,
       };
     }
+
+    // Unexpected (non-API) failure — surface it in the server logs so it isn't
+    // silently swallowed behind the generic message shown to the user.
+    console.error("[signInAction] Unexpected error:", error);
 
     return {
       status: "error",

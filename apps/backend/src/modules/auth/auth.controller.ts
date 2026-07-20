@@ -10,7 +10,7 @@ import { HTTPSTATUS } from "../../config/http.config";
 import {
   clearAuthenticationCookies,
   getRefreshTokenFromCookies,
-  setAuthenticationCookies,
+  // setAuthenticationCookies,
 } from "../../utils/cookies";
 import { UnauthorizedException } from "../../utils/catch-errors";
 import { authService } from "./auth.service";
@@ -26,11 +26,11 @@ export const registerController: RequestHandler = async (req, res) => {
 
   const payload = registerResponseSchema.parse(response);
 
-  setAuthenticationCookies({
-    res,
-    accessToken: payload.accessToken,
-    refreshToken: payload.refreshToken,
-  });
+  // setAuthenticationCookies({
+  //   res,
+  //   accessToken: payload.accessToken,
+  //   refreshToken: payload.refreshToken,
+  // });
 
   res.status(HTTPSTATUS.CREATED).json(payload);
 };
@@ -46,11 +46,11 @@ export const loginController: RequestHandler = async (req, res) => {
 
   const payload = loginResponseSchema.parse(response);
 
-  setAuthenticationCookies({
-    res,
-    accessToken: payload.accessToken,
-    refreshToken: payload.refreshToken,
-  });
+  // setAuthenticationCookies({
+  //   res,
+  //   accessToken: payload.accessToken,
+  //   refreshToken: payload.refreshToken,
+  // });
 
   res.status(HTTPSTATUS.OK).json(payload);
 };
@@ -72,11 +72,11 @@ export const refreshController: RequestHandler = async (req, res) => {
 
     const payload = refreshResponseSchema.parse(response);
 
-    setAuthenticationCookies({
-      res,
-      accessToken: payload.accessToken, // TODO: consider not saving new access token in cookie!
-      refreshToken: payload.refreshToken,
-    });
+    // setAuthenticationCookies({
+    //   res,
+    //   accessToken: payload.accessToken, // TODO: consider not saving new access token in cookie!
+    //   refreshToken: payload.refreshToken,
+    // });
 
     res.status(HTTPSTATUS.OK).json(payload);
   } catch (error) {

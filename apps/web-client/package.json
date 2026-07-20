@@ -13,17 +13,20 @@
     "clean": "rm -rf .next"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
     "@repo/api-contracts": "workspace:*",
     "@repo/theme": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@tailwindcss/vite": "^4.3.1",
+    "jose": "^6.2.3",
     "lucide-react": "^1.21.0",
     "next": "catalog:",
     "postcss": "^8.5.15",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-hook-form": "^7.81.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {

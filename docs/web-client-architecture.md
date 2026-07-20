@@ -222,18 +222,20 @@ Validate credentials on the server even when client-side validation exists.
 
 Preferred production design:
 
-- Store a short-lived access token in memory only if the backend architecture
-  requires bearer tokens from browser requests.
-- Store refresh/session credentials only in `HttpOnly`, `Secure`, appropriately
-  configured `SameSite` cookies.
+- Treat the Next.js web client as the BFF boundary for browser authentication.
+- Backend auth endpoints return validated token payloads; they do not need to
+  issue browser cookies directly.
+- Persist access and refresh tokens only from Server Actions or Route Handlers
+  using `HttpOnly`, `Secure`, appropriately configured `SameSite` cookies.
 - Never store refresh tokens in `localStorage`, persisted Zustand/Redux state,
   or JavaScript-readable cookies.
-- On browser refresh, restore an in-memory access token through a secure refresh
-  endpoint.
+- Server-side API helpers may read the access token cookie and send it to the
+  backend as a bearer token. When refreshing, forward only the refresh token to
+  the backend and persist the rotated tokens returned in the response.
 
-For Server Component authentication, prefer a secure cookie/BFF session design.
-Browser memory is unavailable to Server Components and is cleared by a full
-page refresh.
+For Server Component authentication, prefer this secure cookie/BFF session
+design. Browser memory is unavailable to Server Components and is cleared by a
+full page refresh.
 
 ## Product Reference Structure
 
