@@ -20,6 +20,11 @@ const en = {
     signUp: "Sign up",
     signOut: "Sign out",
   },
+  categoryMenu: {
+    trigger: "Browse categories",
+    title: "Categories",
+    allProducts: "All products",
+  },
   auth: {
     signIn: {
       title: "Sign in",

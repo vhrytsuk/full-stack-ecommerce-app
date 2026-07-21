@@ -1,3 +1,6 @@
+import { Suspense } from "react";
+
+import { CategoryMenuTrigger } from "@/widgets/categoryMenu";
 import { getCurrentLocale, getDictionary } from "@/shared/i18n";
 
 import { HeaderActions } from "./HeaderActions";
@@ -10,7 +13,12 @@ export async function SiteHeader() {
   return (
     <header className='sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur'>
       <div className='container-storefront flex h-16 items-center justify-between gap-4'>
-        <HeaderLogo t={dictionary} />
+        <div className='flex items-center gap-1'>
+          <HeaderLogo t={dictionary} />
+          <Suspense fallback={null}>
+            <CategoryMenuTrigger />
+          </Suspense>
+        </div>
         <HeaderNav t={dictionary} />
         <HeaderActions t={dictionary} />
       </div>
