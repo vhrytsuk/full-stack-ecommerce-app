@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { getCategories, getCategoryProducts } from "@/entities/category";
+import { ProductCard } from "@/entities/product";
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
@@ -42,12 +43,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           aria-label='Products'
           className='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4'
         >
-          {/* TODO: replace with ProductCard from entities/product once available. */}
-          {products.map((_, index) => (
-            <div
-              key={index}
-              className='aspect-square rounded-lg border border-border bg-muted/30'
-            />
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </section>
       )}
