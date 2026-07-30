@@ -11,6 +11,7 @@ import { authRouter } from "./modules/auth/auth.routes";
 import { dbRouter } from "./modules/db/db.routes";
 import { productRoute } from "./modules/product/product.routes";
 import { categoryRoute } from "./modules/category/category.routes";
+import { redisRoute } from "./modules/redis/redis.route.js";
 
 const app: Express = express();
 const BASE_PATH = env.BACKEND_API_BASE_PATH;
@@ -32,6 +33,8 @@ app.get(`${BASE_PATH}/health`, (_req, res) => {
 
   res.status(200).json(payload);
 });
+
+app.use(`${BASE_PATH}/redis`, redisRoute);
 
 app.use(`${BASE_PATH}/auth`, authRouter);
 app.use(`${BASE_PATH}/db`, dbRouter);

@@ -106,6 +106,13 @@ export class ProductRepository {
     });
   }
 
+  getProductBySlug(slug: string) {
+    return this.prisma.product.findUnique({
+      where: { slug },
+      include: productDetailInclude,
+    });
+  }
+
   createProduct(productData: CreateProductData) {
     return this.prisma.$transaction(async (tx) => {
       const product = await tx.product.create({

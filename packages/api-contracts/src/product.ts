@@ -26,6 +26,10 @@ export const getProductByIdParamsSchema = z.object({
   id: z.string().trim().min(1, "Product ID is required"),
 });
 
+export const getProductBySlugParamsSchema = z.object({
+  slug: z.string().trim().min(1, "Product slug is required"),
+});
+
 const decimalStringSchema = z.string().min(1);
 const dateTimeSchema = z.iso.datetime();
 const createDecimalSchema = z
@@ -407,13 +411,61 @@ export const productDetailSchema = productSummarySchema.extend({
   variants: z.array(productVariantSchema),
 });
 
+/**
+ * Kind of product presented on a listing card.
+ * - `simple`: no option types, sold as a single default variant. It can be
+ *   added to the cart directly.
+ * - `configurable`: has option types (e.g. Size, Color); the customer must
+ *   choose a variant on the product page before adding to the cart.
+ */
+export const productCardKindSchema = z.enum(["simple", "configurable"]);
+
+export const productCardImageSchema = z.object({
+  url: z.string(),
+  altText: z.string().nullable(),
+});
+
+/**
+ * Denormalized, listing-optimized product shape. The backend precomputes the
+ * price range, stock, and default variant so cards never ship full variant
+ * trees to the client.
+ */
+export const productCardSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  slug: z.string(),
+  description: z.string().nullable(),
+  kind: productCardKindSchema,
+  image: productCardImageSchema.nullable(),
+  /** Lowest variant price, as a decimal string (e.g. "19.99"). */
+  minPrice: decimalStringSchema,
+  /** Highest variant price; equals `minPrice` for single-price products. */
+  maxPrice: decimalStringSchema,
+  /** Crossed-out "was" price, when a single-price product is discounted. */
+  compareAtPrice: decimalStringSchema.nullable(),
+  currency: z.string(),
+  /** Names of the option types (e.g. ["Size", "Color"]) for configurable products. */
+  optionTypes: z.array(z.string()),
+  inStock: z.boolean(),
+  /** The variant to add to the cart for `simple` products; `null` otherwise. */
+  defaultVariantId: z.string().nullable(),
+});
+
+export type ProductCardKind = z.infer<typeof productCardKindSchema>;
+export type ProductCardImage = z.infer<typeof productCardImageSchema>;
+export type ProductCard = z.infer<typeof productCardSchema>;
+
 export type ProductVariant = z.infer<typeof productVariantSchema>;
 
 export type ProductDetail = z.infer<typeof productDetailSchema>;
 
 export type GetProductsQueryParams = z.infer<typeof getProductsQuerySchema>;
 export type GetProductByIdParams = z.infer<typeof getProductByIdParamsSchema>;
+export type GetProductBySlugParams = z.infer<
+  typeof getProductBySlugParamsSchema
+>;
 export type GetProductByIdResponse = ProductDetail;
+export type GetProductBySlugResponse = ProductDetail;
 export type GetProductsResponse = z.infer<typeof getProductsResponseSchema>;
 
 export type CreateProductInput = z.infer<typeof createProductSchema>;

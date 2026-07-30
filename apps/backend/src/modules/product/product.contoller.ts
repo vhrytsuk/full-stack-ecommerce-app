@@ -4,8 +4,10 @@ import { RequestHandler } from "express";
 import {
   getProductsQuerySchema,
   type GetProductByIdParams,
+  type GetProductBySlugParams,
   type GetProductsQueryParams,
   getProductByIdParamsSchema,
+  getProductBySlugParamsSchema,
   createProductSchema,
   UpdateProductInput,
   updateProductSchema,
@@ -41,6 +43,17 @@ export class ProductController {
     const { id } = getProductByIdParamsSchema.parse(req.params);
 
     const product = await this.productService.getProductById(id);
+
+    res.status(HTTPSTATUS.OK).json(product);
+  };
+
+  getProductBySlug: RequestHandler<GetProductBySlugParams> = async (
+    req,
+    res
+  ) => {
+    const { slug } = getProductBySlugParamsSchema.parse(req.params);
+
+    const product = await this.productService.getProductBySlug(slug);
 
     res.status(HTTPSTATUS.OK).json(product);
   };

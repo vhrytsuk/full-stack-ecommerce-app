@@ -23,6 +23,11 @@ const EnvSchema = z.object({
   JWT_ACCESS_ISSUER: z.string().default("full-stack-ecommerce-backend"),
   JWT_ACCESS_AUDIENCE: z.string().default("full-stack-ecommerce-api"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+
+  REDIS_URL: z.url().min(1, "REDIS_URL is required"),
+  REDIS_CONNECT_TIMEOUT_MS: z.coerce.number().int().positive().default(5_000),
+  REDIS_COMMAND_TIMEOUT_MS: z.coerce.number().int().positive().default(1_000),
+  REDIS_KEY_PREFIX: z.string().default("ecommerce:"),
 });
 
 const parsedEnv = EnvSchema.parse(process.env);

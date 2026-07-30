@@ -4,6 +4,8 @@ export type {
   ProductCard,
   ProductCardKind,
   ProductCardImage,
+  ProductDetail,
+  ProductVariant,
 } from "@repo/api-contracts";
 
 /**

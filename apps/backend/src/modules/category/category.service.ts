@@ -1,5 +1,10 @@
+import {
+  categoryProductsResponseSchema,
+  type CategoryProductsResponse,
+} from "@repo/api-contracts";
 import { NotFoundException } from "../../utils/catch-errors";
 import { CategoryRepository } from "./category.repository";
+import { mapProductToCard } from "./category.mapper";
 
 export class CategoryService {
   private categoryRepository: CategoryRepository;
@@ -14,7 +19,7 @@ export class CategoryService {
     return categories;
   }
 
-  async getCategoryProducts(slug: string) {
+  async getCategoryProducts(slug: string): Promise<CategoryProductsResponse> {
     const categoryWithProducts =
       await this.categoryRepository.getCategoryBySlug(slug);
 
@@ -22,6 +27,8 @@ export class CategoryService {
       throw new NotFoundException("Category not found");
     }
 
-    return categoryWithProducts.products;
+    return categoryProductsResponseSchema.parse(
+      categoryWithProducts.products.map(mapProductToCard)
+    );
   }
 }

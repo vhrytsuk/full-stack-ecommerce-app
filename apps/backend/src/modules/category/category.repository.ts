@@ -15,7 +15,20 @@ export class CategoryRepository {
     return this.prisma.category.findUnique({
       where: { slug },
       include: {
-        products: true,
+        products: {
+          include: {
+            images: {
+              orderBy: { position: "asc" },
+            },
+            optionTypes: {
+              orderBy: { position: "asc" },
+            },
+            variants: {
+              orderBy: { price: "asc" },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+        },
       },
     });
   }

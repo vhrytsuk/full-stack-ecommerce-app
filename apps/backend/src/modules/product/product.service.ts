@@ -63,6 +63,16 @@ export class ProductService {
     return productDetailSchema.parse(toJsonValue(product));
   }
 
+  async getProductBySlug(slug: string): Promise<GetProductByIdResponse> {
+    const product = await this.productRepository.getProductBySlug(slug);
+
+    if (!product) {
+      throw new NotFoundException("Product not found");
+    }
+
+    return productDetailSchema.parse(toJsonValue(product));
+  }
+
   async createProduct(productData: CreateProductInput) {
     const newProduct = await this.productRepository.createProduct(
       mapCreateProductInputToData(productData)
